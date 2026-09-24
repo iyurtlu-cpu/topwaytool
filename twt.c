@@ -5,7 +5,11 @@
 #include <unistd.h>
 #include <ctype.h>
 #include <openssl/md5.h>
-
+#ifdef _WIN32
+    #include <stdlib.h>
+    #define random rand
+    #define srandom srand
+#endif
 typedef enum result { OK = 0, ERROR, MEM_ERROR, IO_ERROR } result_t;
 
 #define NELEM(x) (sizeof(x)/sizeof(x[0]))
