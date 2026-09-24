@@ -1,15 +1,34 @@
 name: Build Windows Executable
-on: [push, workflow_dispatch]
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: windows-latest
+
     steps:
-      - uses: actions/checkout@v3
-      - name: Compile with GCC
-        run: gcc -O2 *.c -o topwaytool.exe
-      - name: Upload Executable
-        uses: actions/upload-artifact@v3
-        with:
-          name: topwaytool-windows
-          path: topwaytool.exe
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up MSYS2 (GCC & OpenSSL)
+      uses: msys2/setup-msys2@v2
+      with:
+        msystem: MINGW64
+        install: >-
+          mingw-w64-x86_64-gcc
+          mingw-w64-x86_64-openssl
+          make
+
+    - name: Compile topwaytool.exe
+      shell: msys2 {0}
+      run: |
+        gcc -O2 twt.c -lssl -lcrypto -o topwaytool.exe
+
+    - name: Upload Executable Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: topwaytool-windows-x64
+        path: topwaytool.exe
