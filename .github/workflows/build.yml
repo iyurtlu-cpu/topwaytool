@@ -1,0 +1,15 @@
+name: Build Windows Executable
+on: [push, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Compile with GCC
+        run: gcc -O2 *.c -o topwaytool.exe
+      - name: Upload Executable
+        uses: actions/upload-artifact@v3
+        with:
+          name: topwaytool-windows
+          path: topwaytool.exe
